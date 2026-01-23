@@ -1,304 +1,608 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FLUZA — Todo fluye</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUZA — El Futuro Fluye</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
     <style>
         :root {
-            --bg: #05070c;
-            --panel: #0c1120;
             --accent: #4de3ff;
-            --accent-soft: rgba(77, 227, 255, 0.15);
-            --text: #e6ebf2;
-            --muted: #9aa4b2;
+            --accent-dim: rgba(77, 227, 255, 0.1);
+            --bg-dark: #030407;
+            --surface: #0a0f18;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: radial-gradient(circle at top, #0a1022, var(--bg));
-            color: var(--text);
-            line-height: 1.6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e6ebf2;
             overflow-x: hidden;
         }
 
-        /* ---- Animaciones base ---- */
-        @keyframes fadeUp {
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Cinematic Grain & Scanlines */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 50;
+            mix-blend-mode: overlay;
+        }
+        
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 51;
+            opacity: 0.5;
+        }
+
+        /* Utility Effects */
+        .glass {
+            background: rgba(10, 15, 24, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 30px rgba(77, 227, 255, 0.3);
+        }
+
+        .grid-bg {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--accent);
+            color: var(--bg-dark);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(40px);
+                transform: translateY(30px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        @keyframes glow {
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
             from {
-                box-shadow: 0 0 0 var(--accent-soft);
+                opacity: 0;
+                transform: scale(0.9);
             }
-
             to {
-                box-shadow: 0 0 40px var(--accent-soft);
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
-        /* ---- Layout ---- */
-        section {
-            padding: 100px 10%;
+        @keyframes slideDown {
+            from { transform: translateY(-100px); }
+            to { transform: translateY(0); }
         }
 
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 32px;
-            animation: fadeUp 1.2s ease forwards;
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
         }
 
-        .hero h1 {
-            font-size: clamp(3rem, 6vw, 5rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
         }
 
-        .hero h1 span {
-            color: var(--accent);
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
         }
 
-        .hero p {
-            max-width: 680px;
-            font-size: 1.2rem;
-            color: var(--muted);
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out forwards;
         }
 
-        .cta {
-            display: inline-block;
-            padding: 16px 32px;
-            margin-top: 20px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, var(--accent), #7af0ff);
-            color: #000;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .animate-scale-in {
+            animation: scaleIn 1s ease-out forwards;
         }
 
-        .cta:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 40px rgba(77, 227, 255, 0.4);
+        .animate-slide-down {
+            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* ---- Secciones ---- */
-        .panel {
-            background: linear-gradient(180deg, var(--panel), #070b18);
-            border-radius: 24px;
-            padding: 60px;
-            margin-bottom: 80px;
-            animation: fadeUp 1s ease forwards;
+        .animate-pulse-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
         }
 
-        .panel h2 {
-            font-size: 2.4rem;
-            margin-bottom: 20px;
+        .animate-bounce-slow {
+            animation: bounce 2s ease-in-out infinite;
         }
 
-        .panel p {
-            color: var(--muted);
-            max-width: 900px;
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-700 { animation-delay: 0.7s; }
+        .delay-1000 { animation-delay: 1s; }
+        .delay-1500 { animation-delay: 1.5s; }
+
+        /* Navbar */
+        .navbar {
+            transition: all 0.3s ease;
         }
 
-        /* ---- Grid ---- */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+        .navbar.scrolled {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            background: rgba(10, 15, 24, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 20px;
-            padding: 30px;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        /* Button Effects */
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
         }
 
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: white;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
         }
 
-        .card h3 {
-            margin-bottom: 12px;
-            color: var(--accent);
+        .btn-primary:hover::after {
+            transform: translateY(0);
         }
 
-        /* ---- Línea visual ---- */
-        .flow {
-            height: 4px;
-            width: 0;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            margin: 80px 0;
-            animation: flowLine 2s ease forwards;
+        .btn-primary span {
+            position: relative;
+            z-index: 10;
         }
 
-        @keyframes flowLine {
-            to {
-                width: 100%;
-            }
+        /* Feature Card */
+        .feature-card {
+            transition: transform 0.3s ease;
         }
 
-        /* ---- Footer ---- */
-        footer {
-            padding: 60px 10%;
-            text-align: center;
-            color: var(--muted);
-            font-size: 0.9rem;
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card .bg-image {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .feature-card:hover .bg-image {
+            opacity: 0.4;
+        }
+
+        .feature-card .corner-decoration {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover .corner-decoration {
+            opacity: 1;
+        }
+
+        .feature-card .icon-box {
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .icon-box {
+            background: var(--accent);
+            color: black;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* Parallax */
+        .parallax-container {
+            overflow: hidden;
+        }
+
+        .parallax-image {
+            will-change: transform;
         }
     </style>
 </head>
+<body class="antialiased">
+    <div class="noise-overlay"></div>
+    <div class="scanlines"></div>
 
-<body>
+    <!-- Navbar -->
+    <nav id="navbar" class="navbar fixed top-0 left-0 right-0 z-40 py-8 bg-transparent animate-slide-down">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 bg-[#4de3ff] rounded-full shadow-[0_0_10px_#4de3ff]"></div>
+                <span class="font-bold text-xl tracking-tighter text-white">FLUZA</span>
+            </div>
+            
+            <div class="hidden md:flex gap-8 items-center">
+                <a href="#servicios" class="text-sm font-medium text-gray-400 hover:text-[#4de3ff] transition-colors uppercase tracking-widest text-[10px]">Servicios</a>
+                <a href="#tecnologia" class="text-sm font-medium text-gray-400 hover:text-[#4de3ff] transition-colors uppercase tracking-widest text-[10px]">Tecnología</a>
+                <a href="#nosotros" class="text-sm font-medium text-gray-400 hover:text-[#4de3ff] transition-colors uppercase tracking-widest text-[10px]">Nosotros</a>
+                <a href="#contacto" class="text-sm font-medium text-gray-400 hover:text-[#4de3ff] transition-colors uppercase tracking-widest text-[10px]">Contacto</a>
+            </div>
 
-    <!-- HERO -->
-    <section class="hero">
-        <h1>Todo fluye en <span>FLUZA</span></h1>
-        <p>
-            El sistema operativo para negocios digitales que elimina la fricción,
-            centraliza la operación y permite crecer con claridad, orden y control total.
-        </p>
-        <a href="#" class="cta">Solicitar demo</a>
-    </section>
+            <button class="hidden md:flex items-center gap-2 px-5 py-2 border border-[#4de3ff]/30 text-[#4de3ff] text-xs font-bold tracking-widest uppercase hover:bg-[#4de3ff] hover:text-black transition-all duration-300">
+                Acceso Beta
+            </button>
 
-    <div class="flow"></div>
+            <button id="menuToggle" class="md:hidden text-white">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
 
-    <!-- PROBLEMA -->
-    <section>
-        <div class="panel">
-            <h2>El crecimiento no debería sentirse como caos</h2>
-            <p>
-                Los negocios digitales modernos operan con herramientas desconectadas,
-                procesos manuales y sistemas fragmentados. El resultado es desgaste,
-                errores y una experiencia inconsistente para equipos y clientes.
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed inset-0 z-50 bg-[#030407] flex flex-col items-center justify-center gap-8">
+        <button id="menuClose" class="absolute top-8 right-6 text-white">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+        <a href="#servicios" class="text-2xl font-bold text-white hover:text-[#4de3ff] transition-colors">Servicios</a>
+        <a href="#tecnologia" class="text-2xl font-bold text-white hover:text-[#4de3ff] transition-colors">Tecnología</a>
+        <a href="#nosotros" class="text-2xl font-bold text-white hover:text-[#4de3ff] transition-colors">Nosotros</a>
+        <a href="#contacto" class="text-2xl font-bold text-white hover:text-[#4de3ff] transition-colors">Contacto</a>
+        <button class="mt-8 px-8 py-3 bg-[#4de3ff] text-black font-bold text-sm tracking-widest uppercase">
+            Acceso Beta
+        </button>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Background -->
+        <div class="absolute inset-0 z-0">
+            <img 
+                src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" 
+                alt="Space Background" 
+                class="w-full h-full object-cover opacity-20 grayscale mix-blend-screen"
+                loading="eager"
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#030407]/80 to-[#030407]"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#4de3ff] rounded-full blur-[150px] animate-pulse-glow"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 opacity-0 animate-fade-in-up delay-200" style="animation-fill-mode: forwards;">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-300 mono">Sistema Operativo V 2.0</span>
+            </div>
+
+            <h1 class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none mb-6 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600 text-glow opacity-0 animate-scale-in delay-100" style="animation-fill-mode: forwards;">
+                TODO<br />FLUYE.
+            </h1>
+
+            <p class="max-w-xl mx-auto text-gray-400 text-lg md:text-xl mb-10 leading-relaxed font-light opacity-0 animate-fade-in delay-500" style="animation-fill-mode: forwards;">
+                La intersección entre la inteligencia artificial y la intuición humana. 
+                <span class="text-[#4de3ff]">Fluza</span> orquesta tus datos para crear realidades digitales sin fricción.
             </p>
+
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center opacity-0 animate-fade-in-up delay-700" style="animation-fill-mode: forwards;">
+                <button class="btn-primary px-8 py-4 bg-[#4de3ff] text-[#030407] font-bold text-sm tracking-widest uppercase">
+                    <span class="flex items-center gap-2">
+                        Iniciar Viaje <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </span>
+                </button>
+                <button class="px-8 py-4 border border-white/20 text-white font-bold text-sm tracking-widest uppercase hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <i data-lucide="play" class="w-4 h-4 fill-current"></i> Ver Demo
+                </button>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-500 opacity-0 animate-fade-in delay-1500" style="animation-fill-mode: forwards;">
+            <span class="text-[10px] uppercase tracking-widest mono">Scroll</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 animate-bounce-slow"></i>
         </div>
     </section>
 
-    <!-- SOLUCIÓN -->
-    <section>
-        <div class="panel">
-            <h2>Un solo sistema. Todo conectado.</h2>
-            <p>
-                FLUZA centraliza y organiza la operación completa del negocio digital.
-                No es una herramienta más: es el núcleo desde el cual todo fluye.
-            </p>
+    <!-- Features Section -->
+    <section id="servicios" class="py-32 relative">
+        <div class="absolute inset-0 grid-bg opacity-20 pointer-events-none"></div>
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+                <div>
+                    <span class="text-[#4de3ff] mono text-xs tracking-widest mb-2 block">// CAPACIDADES</span>
+                    <h2 class="text-4xl md:text-5xl font-bold text-white max-w-lg">
+                        Diseñado para lo <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#4de3ff] to-purple-500">Imposible</span>
+                    </h2>
+                </div>
+                <p class="text-gray-400 max-w-sm text-sm md:text-base border-l border-[#4de3ff] pl-4">
+                    Nuestra infraestructura escala contigo. Desde startups disruptivas hasta conglomerados interplanetarios.
+                </p>
+            </div>
 
-            <div class="grid">
-                <div class="card">
-                    <h3>Unificación</h3>
-                    <p>Todos los procesos clave viven en un solo ecosistema coherente.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Feature Card 1 -->
+                <div class="feature-card group relative h-[400px] overflow-hidden border border-white/10 bg-[#0a0f18] flex flex-col justify-end p-8">
+                    <div class="bg-image absolute inset-0">
+                        <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2070&auto=format&fit=crop" alt="Quantum" class="w-full h-full object-cover grayscale" loading="lazy" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f18] to-transparent"></div>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="icon-box w-12 h-12 mb-6 border border-[#4de3ff]/30 flex items-center justify-center text-[#4de3ff] bg-[#4de3ff]/5 backdrop-blur-sm">
+                            <i data-lucide="zap" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Procesamiento Cuántico</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Algoritmos que evolucionan en tiempo real. Velocidad superior a la comprensión lineal.</p>
+                    </div>
+                    <div class="corner-decoration absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#4de3ff]"></div>
                 </div>
-                <div class="card">
-                    <h3>Escalabilidad</h3>
-                    <p>Crece sin añadir complejidad ni rehacer tu estructura.</p>
+
+                <!-- Feature Card 2 -->
+                <div class="feature-card group relative h-[400px] overflow-hidden border border-white/10 bg-[#0a0f18] flex flex-col justify-end p-8">
+                    <div class="bg-image absolute inset-0">
+                        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" alt="Global" class="w-full h-full object-cover grayscale" loading="lazy" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f18] to-transparent"></div>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="icon-box w-12 h-12 mb-6 border border-[#4de3ff]/30 flex items-center justify-center text-[#4de3ff] bg-[#4de3ff]/5 backdrop-blur-sm">
+                            <i data-lucide="globe" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Red Neural Global</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Conexión instantánea entre nodos distribuidos en 140 países sin latencia perceptible.</p>
+                    </div>
+                    <div class="corner-decoration absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#4de3ff]"></div>
                 </div>
-                <div class="card">
-                    <h3>Control total</h3>
-                    <p>Visibilidad clara del negocio en todo momento.</p>
+
+                <!-- Feature Card 3 -->
+                <div class="feature-card group relative h-[400px] overflow-hidden border border-white/10 bg-[#0a0f18] flex flex-col justify-end p-8">
+                    <div class="bg-image absolute inset-0">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop" alt="Security" class="w-full h-full object-cover grayscale" loading="lazy" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f18] to-transparent"></div>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="icon-box w-12 h-12 mb-6 border border-[#4de3ff]/30 flex items-center justify-center text-[#4de3ff] bg-[#4de3ff]/5 backdrop-blur-sm">
+                            <i data-lucide="cpu" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Seguridad Biométrica</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Cifrado post-cuántico. Tus datos son una extensión de tu identidad digital.</p>
+                    </div>
+                    <div class="corner-decoration absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#4de3ff]"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CÓMO FUNCIONA -->
-    <section>
-        <div class="panel">
-            <h2>Cómo funciona FLUZA</h2>
-            <p>
-                FLUZA actúa como el núcleo central del negocio digital, permitiendo
-                automatizar procesos, coordinar equipos y escalar modelos replicables
-                desde una sola plataforma.
-            </p>
+    <!-- Visual Break Section -->
+    <section id="tecnologia" class="h-[60vh] md:h-[80vh] relative overflow-hidden flex items-center justify-center parallax-container">
+        <div class="parallax-image absolute inset-0 w-full h-[120%] -top-[10%]">
+            <img 
+                src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop" 
+                alt="Cyber Matrix" 
+                class="w-full h-full object-cover brightness-50 contrast-125"
+                loading="lazy"
+            />
         </div>
-    </section>
-
-    <!-- PARA QUIÉN -->
-    <section>
-        <div class="panel">
-            <h2>Diseñado para quienes necesitan orden para crecer</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Emprendedores</h3>
-                    <p>Control total desde el inicio.</p>
+        
+        <div class="relative z-10 text-center glass p-12 md:p-20 border-y border-[#4de3ff]/20 w-full backdrop-blur-xl">
+            <h2 class="text-5xl md:text-8xl font-black text-white tracking-tighter mix-blend-overlay opacity-80 uppercase">
+                Sincronización Total
+            </h2>
+            <div class="mt-8 flex flex-wrap justify-center gap-8 md:gap-12">
+                <div class="text-center">
+                    <span class="block text-4xl font-bold text-[#4de3ff] mono">99.9%</span>
+                    <span class="text-xs text-gray-400 uppercase tracking-widest">Uptime</span>
                 </div>
-                <div class="card">
-                    <h3>Empresas</h3>
-                    <p>Escalabilidad sin fricción.</p>
+                <div class="text-center">
+                    <span class="block text-4xl font-bold text-[#4de3ff] mono">0.02ms</span>
+                    <span class="text-xs text-gray-400 uppercase tracking-widest">Latencia</span>
                 </div>
-                <div class="card">
-                    <h3>Redes</h3>
-                    <p>Estructuras replicables y claras.</p>
-                </div>
-                <div class="card">
-                    <h3>Educadores</h3>
-                    <p>Formación integrada al negocio.</p>
+                <div class="text-center">
+                    <span class="block text-4xl font-bold text-[#4de3ff] mono">∞</span>
+                    <span class="text-xs text-gray-400 uppercase tracking-widest">Escalabilidad</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- VISIÓN -->
-    <section>
-        <div class="panel">
-            <h2>La infraestructura del crecimiento digital</h2>
-            <p>
-                FLUZA está diseñada para convertirse en el sistema de referencia
-                para negocios digitales que buscan crecer sin caos, priorizando
-                eficiencia, claridad y sostenibilidad.
-            </p>
+    <!-- Trust Section -->
+    <section id="nosotros" class="py-20 text-center px-6">
+        <h3 class="text-2xl text-white mb-8 font-light">Confían en nosotros los líderes del mañana</h3>
+        <div class="flex flex-wrap justify-center gap-8 md:gap-12 opacity-40 grayscale">
+            <span class="text-xl font-black tracking-widest text-white">NEXUS</span>
+            <span class="text-xl font-black tracking-widest text-white">ORBITAL</span>
+            <span class="text-xl font-black tracking-widest text-white">CYBERDYNE</span>
+            <span class="text-xl font-black tracking-widest text-white">MASSIVE</span>
+            <span class="text-xl font-black tracking-widest text-white">VORTEX</span>
         </div>
     </section>
 
-    <!-- CTA FINAL -->
-    <section class="hero">
-        <h1>El control vuelve a fluir</h1>
-        <p>
-            FLUZA no es solo tecnología. Es la base sobre la que se construyen
-            negocios digitales sólidos, escalables y sostenibles.
-        </p>
-        <a href="#" class="cta">Comenzar ahora</a>
+    <!-- CTA Section -->
+    <section id="contacto" class="py-32 relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#4de3ff]/5 to-transparent"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <h2 class="text-4xl md:text-6xl font-black text-white mb-6">¿Listo para fluir?</h2>
+            <p class="text-gray-400 max-w-xl mx-auto mb-10">Únete a la próxima generación de innovadores digitales. Tu transformación comienza con un solo paso.</p>
+            <button class="btn-primary px-10 py-5 bg-[#4de3ff] text-[#030407] font-bold text-sm tracking-widest uppercase">
+                <span class="flex items-center gap-2">
+                    Solicitar Acceso <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </span>
+            </button>
+        </div>
     </section>
 
-    <footer>
-        © FLUZA — Infraestructura de crecimiento digital
+    <!-- Footer -->
+    <footer class="bg-[#020305] pt-20 pb-10 border-t border-white/5">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-3 h-3 bg-[#4de3ff] rounded-full"></div>
+                        <span class="font-bold text-2xl tracking-tighter text-white">FLUZA</span>
+                    </div>
+                    <p class="text-gray-500 max-w-xs text-sm">
+                        Redefiniendo los límites de la interacción digital a través de sistemas de flujo avanzados. El futuro es líquido.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-widest text-xs">Plataforma</h4>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-[#4de3ff] transition-colors">Soluciones AI</a></li>
+                        <li><a href="#" class="hover:text-[#4de3ff] transition-colors">Infraestructura</a></li>
+                        <li><a href="#" class="hover:text-[#4de3ff] transition-colors">Seguridad</a></li>
+                        <li><a href="#" class="hover:text-[#4de3ff] transition-colors">Integraciones</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-widest text-xs">Legal</h4>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-[#4de3ff] transition-colors">Privacidad</a></li>
+                        <li><a href="#" class="hover:text-[#4de3ff] transition-colors">Términos</a></li>
+                        <li><a href="#" class="hover:text-[#4de3ff] transition-colors">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 gap-4">
+                <span class="text-gray-600 text-xs mono">© 2024 FLUZA SYSTEMS INC. TODOS LOS DERECHOS RESERVADOS.</span>
+                <div class="flex gap-4 items-center">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-gray-500 text-xs mono">SISTEMAS OPERATIVOS</span>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script>
-        /* Microinteracción suave al hacer scroll */
-const panels = document.querySelectorAll('.panel');
+        // Initialize Lucide icons
+        lucide.createIcons();
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.animation = 'fadeUp 1s ease forwards';
-    }
-  });
-}, { threshold: 0.2 });
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
 
-panels.forEach(p => observer.observe(p));
+        // Mobile menu
+        const menuToggle = document.getElementById('menuToggle');
+        const menuClose = document.getElementById('menuClose');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+
+        menuClose.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = '';
+        });
+
+        // Close menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Simple parallax effect
+        const parallaxImage = document.querySelector('.parallax-image');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const rate = scrolled * 0.3;
+            if (parallaxImage) {
+                parallaxImage.style.transform = `translateY(${rate}px)`;
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                    entry.target.style.opacity = '1';
+                }
+            });
+        }, observerOptions);
+
+        // Observe feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.opacity = '0';
+            observer.observe(card);
+        });
     </script>
-
 </body>
-
 </html>
