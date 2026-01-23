@@ -1,11 +1,304 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLUZA — Todo fluye</title>
+
+    <style>
+        :root {
+            --bg: #05070c;
+            --panel: #0c1120;
+            --accent: #4de3ff;
+            --accent-soft: rgba(77, 227, 255, 0.15);
+            --text: #e6ebf2;
+            --muted: #9aa4b2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at top, #0a1022, var(--bg));
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ---- Animaciones base ---- */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 0 var(--accent-soft);
+            }
+
+            to {
+                box-shadow: 0 0 40px var(--accent-soft);
+            }
+        }
+
+        /* ---- Layout ---- */
+        section {
+            padding: 100px 10%;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 32px;
+            animation: fadeUp 1.2s ease forwards;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+        }
+
+        .hero p {
+            max-width: 680px;
+            font-size: 1.2rem;
+            color: var(--muted);
+        }
+
+        .cta {
+            display: inline-block;
+            padding: 16px 32px;
+            margin-top: 20px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--accent), #7af0ff);
+            color: #000;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(77, 227, 255, 0.4);
+        }
+
+        /* ---- Secciones ---- */
+        .panel {
+            background: linear-gradient(180deg, var(--panel), #070b18);
+            border-radius: 24px;
+            padding: 60px;
+            margin-bottom: 80px;
+            animation: fadeUp 1s ease forwards;
+        }
+
+        .panel h2 {
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+        }
+
+        .panel p {
+            color: var(--muted);
+            max-width: 900px;
+        }
+
+        /* ---- Grid ---- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 30px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+
+        /* ---- Línea visual ---- */
+        .flow {
+            height: 4px;
+            width: 0;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            margin: 80px 0;
+            animation: flowLine 2s ease forwards;
+        }
+
+        @keyframes flowLine {
+            to {
+                width: 100%;
+            }
+        }
+
+        /* ---- Footer ---- */
+        footer {
+            padding: 60px 10%;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
+
 <body>
-    <p>hello world</p>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1>Todo fluye en <span>FLUZA</span></h1>
+        <p>
+            El sistema operativo para negocios digitales que elimina la fricción,
+            centraliza la operación y permite crecer con claridad, orden y control total.
+        </p>
+        <a href="#" class="cta">Solicitar demo</a>
+    </section>
+
+    <div class="flow"></div>
+
+    <!-- PROBLEMA -->
+    <section>
+        <div class="panel">
+            <h2>El crecimiento no debería sentirse como caos</h2>
+            <p>
+                Los negocios digitales modernos operan con herramientas desconectadas,
+                procesos manuales y sistemas fragmentados. El resultado es desgaste,
+                errores y una experiencia inconsistente para equipos y clientes.
+            </p>
+        </div>
+    </section>
+
+    <!-- SOLUCIÓN -->
+    <section>
+        <div class="panel">
+            <h2>Un solo sistema. Todo conectado.</h2>
+            <p>
+                FLUZA centraliza y organiza la operación completa del negocio digital.
+                No es una herramienta más: es el núcleo desde el cual todo fluye.
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>Unificación</h3>
+                    <p>Todos los procesos clave viven en un solo ecosistema coherente.</p>
+                </div>
+                <div class="card">
+                    <h3>Escalabilidad</h3>
+                    <p>Crece sin añadir complejidad ni rehacer tu estructura.</p>
+                </div>
+                <div class="card">
+                    <h3>Control total</h3>
+                    <p>Visibilidad clara del negocio en todo momento.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section>
+        <div class="panel">
+            <h2>Cómo funciona FLUZA</h2>
+            <p>
+                FLUZA actúa como el núcleo central del negocio digital, permitiendo
+                automatizar procesos, coordinar equipos y escalar modelos replicables
+                desde una sola plataforma.
+            </p>
+        </div>
+    </section>
+
+    <!-- PARA QUIÉN -->
+    <section>
+        <div class="panel">
+            <h2>Diseñado para quienes necesitan orden para crecer</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Emprendedores</h3>
+                    <p>Control total desde el inicio.</p>
+                </div>
+                <div class="card">
+                    <h3>Empresas</h3>
+                    <p>Escalabilidad sin fricción.</p>
+                </div>
+                <div class="card">
+                    <h3>Redes</h3>
+                    <p>Estructuras replicables y claras.</p>
+                </div>
+                <div class="card">
+                    <h3>Educadores</h3>
+                    <p>Formación integrada al negocio.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISIÓN -->
+    <section>
+        <div class="panel">
+            <h2>La infraestructura del crecimiento digital</h2>
+            <p>
+                FLUZA está diseñada para convertirse en el sistema de referencia
+                para negocios digitales que buscan crecer sin caos, priorizando
+                eficiencia, claridad y sostenibilidad.
+            </p>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="hero">
+        <h1>El control vuelve a fluir</h1>
+        <p>
+            FLUZA no es solo tecnología. Es la base sobre la que se construyen
+            negocios digitales sólidos, escalables y sostenibles.
+        </p>
+        <a href="#" class="cta">Comenzar ahora</a>
+    </section>
+
+    <footer>
+        © FLUZA — Infraestructura de crecimiento digital
+    </footer>
+
+    <script>
+        /* Microinteracción suave al hacer scroll */
+const panels = document.querySelectorAll('.panel');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.animation = 'fadeUp 1s ease forwards';
+    }
+  });
+}, { threshold: 0.2 });
+
+panels.forEach(p => observer.observe(p));
+    </script>
+
 </body>
+
 </html>
