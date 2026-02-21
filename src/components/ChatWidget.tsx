@@ -19,7 +19,20 @@ export default function ChatWidget() {
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [sessionId, setSessionId] = useState<string>('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Initialize or retrieve sessionId
+        const storedId = sessionStorage.getItem('fluza_chat_session');
+        if (storedId) {
+            setSessionId(storedId);
+        } else {
+            const newId = `session-${Math.random().toString(36).substring(2, 11)}`;
+            sessionStorage.setItem('fluza_chat_session', newId);
+            setSessionId(newId);
+        }
+    }, []);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -41,7 +54,10 @@ export default function ChatWidget() {
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: [...messages, userMessage] }),
+                body: JSON.stringify({
+                    messages: [...messages, userMessage],
+                    sessionId: sessionId
+                }),
             });
 
             const data = await response.json();

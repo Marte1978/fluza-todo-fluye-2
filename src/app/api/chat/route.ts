@@ -1,50 +1,48 @@
-import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'placeholder_for_build',
-});
-
-const SYSTEM_PROMPT = `
-Eres Fluza AI, el vendedor digital experto de Fluza. Tu objetivo principal es asesorar a los clientes sobre cómo automatizar sus ventas con IA y CERRAR una cita o venta.
-
-REGLAS DE CONSERVACIÓN:
-1. Sé extremadamente amable, profesional y persuasivo.
-2. Identifica el problema del cliente (pierde ventas por falta de respuesta, saturación, etc.).
-3. Explica cómo Fluza soluciona eso (Vendedor 24/7, respuestas instantáneas, integración con WhatsApp).
-4. Cuando el cliente muestre interés, pide cordialmente sus datos para agendar una CONSULTA GRATUITA o cerrar el servicio.
-5. Los datos necesarios son: Nombre, Correo/Teléfono y Negocio/Necesidad.
-6. Una vez tengas los datos, confirma que un especialista se pondrá en contacto y ofrece enviar un resumen a WhatsApp.
-
-TONO: Premium, innovador y humano.
-
-IMPORTANTE: Si el cliente proporciona sus datos, finaliza la conversación de forma que sea fácil extraerlos. 
-`;
+const N8N_WEBHOOK_URL = 'https://automatizacion-n8n.lnr2f0.easypanel.host/webhook/Fluza2';
 
 export async function POST(req: Request) {
     try {
-        const { messages } = await req.json();
+        const { messages, sessionId } = await req.json();
 
-        if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'placeholder_for_build') {
-            // MOCK RESPONSE FOR TESTING FLOW
-            return NextResponse.json({
-                message: {
-                    role: 'assistant',
-                    content: '¡Hola! Soy Fluza AI (Modo Prueba). Como aún no he detectado tu OpenAI API Key, te respondo con este mensaje de prueba para que veas cómo fluye el chat. Fluza automatiza tus ventas, responde por ti y te ayuda a cerrar más citas. ¿Te gustaría saber más?'
-                }
-            });
-        }
+        // Get the last user message
+        const lastMessage = messages[messages.length - 1];
 
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o',
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                ...messages,
-            ],
-            temperature: 0.7,
+        const response = await fetch(N8N_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: lastMessage.content,
+                sessionId: sessionId || `session-${Date.now()}`,
+            }),
         });
 
-        return NextResponse.json({ message: response.choices[0].message });
+        if (!response.ok) {
+            throw new Error(`n8n error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // 1️⃣ Detección Exhaustiva de Respuestas (8 campos)
+        const content =
+            data.recommendations ||
+            data.text ||
+            data.output ||
+            data.message ||
+            data.response ||
+            data.result ||
+            data.data ||
+            data.content ||
+            "Lo siento, recibí una respuesta pero no pude procesar el mensaje. ¿Puedes intentar de nuevo?";
+
+        return NextResponse.json({
+            message: {
+                role: 'assistant',
+                content: content
+            }
+        });
+
     } catch (error: any) {
         console.error('Chat API Error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
