@@ -25,8 +25,14 @@ export async function POST(req: Request) {
     try {
         const { messages } = await req.json();
 
-        if (!process.env.OPENAI_API_KEY) {
-            return NextResponse.json({ error: 'OpenAI API Key not configured' }, { status: 500 });
+        if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'placeholder_for_build') {
+            // MOCK RESPONSE FOR TESTING FLOW
+            return NextResponse.json({
+                message: {
+                    role: 'assistant',
+                    content: '¡Hola! Soy Fluza AI (Modo Prueba). Como aún no he detectado tu OpenAI API Key, te respondo con este mensaje de prueba para que veas cómo fluye el chat. Fluza automatiza tus ventas, responde por ti y te ayuda a cerrar más citas. ¿Te gustaría saber más?'
+                }
+            });
         }
 
         const response = await openai.chat.completions.create({
