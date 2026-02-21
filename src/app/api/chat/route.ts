@@ -22,24 +22,35 @@ export async function POST(req: Request) {
             throw new Error(`n8n error: ${response.statusText}`);
         }
 
-        const data = await response.json();
+        let content = '';
+        const contentType = response.headers.get('content-type');
 
-        // 1️⃣ Detección Exhaustiva de Respuestas (8 campos)
-        const content =
-            data.recommendations ||
-            data.text ||
-            data.output ||
-            data.message ||
-            data.response ||
-            data.result ||
-            data.data ||
-            data.content ||
-            "Lo siento, recibí una respuesta pero no pude procesar el mensaje. ¿Puedes intentar de nuevo?";
+        if (contentType && contentType.includes('application/json')) {
+            try {
+                const data = await response.json();
+                content =
+                    data.recommendations ||
+                    data.text ||
+                    data.output ||
+                    data.message ||
+                    data.response ||
+                    data.result ||
+                    data.data ||
+                    data.content ||
+                    JSON.stringify(data);
+            } catch (jsonError) {
+                // If it claims to be JSON but fails to parse, fallback to text
+                content = await response.text();
+            }
+        } else {
+            // If it's not JSON (e.g. plain text), get it as text
+            content = await response.text();
+        }
 
         return NextResponse.json({
             message: {
                 role: 'assistant',
-                content: content
+                content: content || "Recibí una respuesta vacía. ¿Puedes intentar de nuevo?"
             }
         });
 
