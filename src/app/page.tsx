@@ -323,7 +323,13 @@ export default function Home() {
                 <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-500 shrink-0" size={20} /> WhatsApp Autopilot</li>
                 <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-500 shrink-0" size={20} /> Agenda Automática</li>
               </ul>
-              <button className="w-full py-5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all text-black font-black uppercase tracking-widest shadow-xl shadow-cyan-500/20">Elegir PRO</button>
+              <a
+                href="https://wa.me/18094789071?text=Hola!%20Quiero%20el%20Plan%20PRO%20Ventas%2024/7%20(RD$%2015,000%20+%20RD$%203,000/mes)."
+                target="_blank"
+                className="block w-full py-5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all text-black font-black uppercase tracking-widest shadow-xl shadow-cyan-500/20 text-center"
+              >
+                Elegir PRO
+              </a>
             </div>
           </motion.div>
 
@@ -411,9 +417,13 @@ export default function Home() {
 
           {/* CTA Button */}
           <div className="flex justify-center">
-            <button className="px-12 py-4 rounded-full bg-[#fbbc05] hover:bg-[#ffcd38] text-black font-black text-lg transition-all shadow-xl shadow-yellow-500/20 uppercase tracking-widest">
+            <a
+              href="https://wa.me/18094789071?text=Hola!%20Me%20interesa%20la%20Oferta%20Especial%20de%20US$%2030/mes%20con%20implementación."
+              target="_blank"
+              className="block px-12 py-4 rounded-full bg-[#fbbc05] hover:bg-[#ffcd38] text-black font-black text-lg transition-all shadow-xl shadow-yellow-500/20 uppercase tracking-widest text-center"
+            >
               Subscribe
-            </button>
+            </a>
           </div>
         </motion.div>
       </section>
