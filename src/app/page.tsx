@@ -301,7 +301,13 @@ export default function Home() {
               <li className="flex items-center gap-3"><CheckCircle2 className="text-green-500 shrink-0" size={18} /> Web + Chat IA</li>
               <li className="flex items-center gap-3"><CheckCircle2 className="text-green-500 shrink-0" size={18} /> Agenda Automática</li>
             </ul>
-            <button className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold transition-all">Seleccionar</button>
+            <a
+              href="https://wa.me/18094789071?text=Hola!%20Me%20interesa%20el%20Plan%20Esencial%20(RD$%2010,000%20+%20RD$%201,500/mes)."
+              target="_blank"
+              className="block w-full py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold transition-all text-center"
+            >
+              Seleccionar
+            </a>
           </motion.div>
 
           {/* PRO */}
@@ -347,7 +353,13 @@ export default function Home() {
               <li className="flex items-center gap-3"><CheckCircle2 className="text-green-500 shrink-0" size={18} /> CRM Inteligente</li>
               <li className="flex items-center gap-3"><CheckCircle2 className="text-green-500 shrink-0" size={18} /> Mentoría Directa</li>
             </ul>
-            <button className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold transition-all">Seleccionar</button>
+            <a
+              href="https://wa.me/18094789071?text=Hola!%20Me%20interesa%20el%20Plan%20ELITE%20Ecosistema%20(RD$%2020,000%20+%20RD$%204,000/mes)."
+              target="_blank"
+              className="block w-full py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold transition-all text-center"
+            >
+              Seleccionar
+            </a>
           </motion.div>
         </div>
       </section>
