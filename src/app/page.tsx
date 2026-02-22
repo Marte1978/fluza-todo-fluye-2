@@ -23,6 +23,7 @@ import ChatSection from '@/components/ChatSection';
 import FAQSection from '@/components/FAQSection';
 import FlowDiagram from '@/components/FlowDiagram';
 import LeadMagnet from '@/components/LeadMagnet';
+import CountdownTimer from '@/components/CountdownTimer';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -346,26 +347,72 @@ export default function Home() {
       {/* FAQ Section */}
       <FAQSection />
 
-      {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-6 py-24">
         <motion.div
-          className="glass-panel rounded-[3rem] p-16 md:p-24 border-2 border-cyan-500/50 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 text-center relative overflow-hidden"
-          whileHover={{ borderColor: '#06b6d4' }}
+          className="glass-panel rounded-[2rem] p-8 md:p-12 border-2 border-cyan-500/50 bg-dark-900/60 relative overflow-hidden max-w-4xl mx-auto"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
         >
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 opacity-50"></div>
-          <div className="relative z-10 max-w-2xl mx-auto">
-            <span className="inline-block px-5 py-2 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-black tracking-widest mb-8 border border-cyan-500/50 uppercase">Oferta Limitada</span>
-            <h2 className="text-4xl md:text-6xl font-heading font-black mb-8 text-white">Ecosistema Completo por <mark className="bg-cyan-500 text-black px-2">US$ 15/mes</mark></h2>
-            <p className="text-gray-300 text-xl mb-12">Todo lo que necesitas para automatizar tu negocio y vender mientras duermes.</p>
+          {/* Top Badge */}
+          <div className="flex justify-center mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-black tracking-widest border border-cyan-500/30 uppercase">
+              <Star size={12} fill="currentColor" /> Oferta Especial Limitada
+            </span>
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <button className="px-12 py-5 rounded-2xl bg-cyan-500 text-black font-black text-lg hover:scale-105 transition-all shadow-2xl shadow-cyan-500/40 flex items-center gap-3">
-                Empezar Ahora <ArrowRight />
-              </button>
-              <div className="flex items-center gap-3 text-red-500 font-black animate-pulse">
-                <Hourglass /> <span className="text-2xl font-mono">01:00:00</span>
-              </div>
+          {/* Title */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-5xl font-heading font-black text-white mb-4">
+              Ecosistema Completo por <span className="text-cyan-400 font-black">US$ 30/mes</span>
+            </h2>
+            <p className="text-gray-400 font-medium">Todo lo que necesitas para automatizar tu negocio</p>
+          </div>
+
+          {/* Timer */}
+          <div className="flex justify-center items-center gap-3 text-red-500 font-black mb-12">
+            <Hourglass className="animate-bounce" />
+            <CountdownTimer />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 items-center bg-white/5 rounded-3xl p-8 border border-white/5 mb-8">
+            {/* Left side: List */}
+            <div className="space-y-6">
+              <h4 className="text-white font-bold text-lg mb-4">Incluye:</h4>
+              <ul className="space-y-4">
+                {[
+                  'WhatsApp Autopilot con IA',
+                  'Agenda Automática',
+                  'CRM Inteligente'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-gray-300 font-medium">
+                    <CheckCircle2 className="text-cyan-500" size={18} /> {item}
+                  </li>
+                ))}
+              </ul>
             </div>
+
+            {/* Right side: Box */}
+            <div className="glass-panel p-8 rounded-2xl border border-white/10 bg-white/5 text-center">
+              <span className="text-gray-500 text-[10px] font-black tracking-widest uppercase block mb-2">IMPLEMENTACIÓN</span>
+              <p className="text-3xl font-heading font-black text-white mb-6">US$ 100</p>
+
+              <span className="text-gray-500 text-[10px] font-black tracking-widest uppercase block mb-2">DESPUÉS</span>
+              <p className="text-3xl font-heading font-black text-cyan-400 mb-2">US$ 30/mes</p>
+              <p className="text-gray-600 text-[10px] italic">*Primer mes promocional</p>
+            </div>
+          </div>
+
+          {/* Bottom Info */}
+          <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-4 flex items-center justify-center gap-3 text-yellow-500/80 text-xs font-bold mb-8">
+            <ShieldCheck size={16} /> Esta oferta no incluye anuncios en Meta Ads
+          </div>
+
+          {/* CTA Button */}
+          <div className="flex justify-center">
+            <button className="px-12 py-4 rounded-full bg-[#fbbc05] hover:bg-[#ffcd38] text-black font-black text-lg transition-all shadow-xl shadow-yellow-500/20 uppercase tracking-widest">
+              Subscribe
+            </button>
           </div>
         </motion.div>
       </section>
