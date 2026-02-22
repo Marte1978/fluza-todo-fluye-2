@@ -24,6 +24,7 @@ import FAQSection from '@/components/FAQSection';
 import FlowDiagram from '@/components/FlowDiagram';
 import LeadMagnet from '@/components/LeadMagnet';
 import CountdownTimer from '@/components/CountdownTimer';
+import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -314,7 +315,7 @@ export default function Home() {
               <div className="text-center mb-10">
                 <span className="inline-block px-4 py-1 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-black tracking-widest mb-6 uppercase">Pro</span>
                 <h4 className="text-3xl font-bold text-white mb-2">Ventas 24/7</h4>
-                <p className="text-5xl font-heading font-black text-white mt-6">RD$ 15,000</p>
+                <p className="text-5xl font-heading font-black text-white mt-6">RD$ 30,000</p>
                 <p className="text-cyan-400 text-xl font-bold mt-2">+ RD$ 3,000/mes</p>
               </div>
               <ul className="space-y-4 text-gray-200 mb-12">
@@ -434,6 +435,8 @@ export default function Home() {
 
         <p className="text-sm text-gray-600">© 2026 Fluza. Todos los derechos reservados.</p>
       </footer>
+
+      <FloatingWhatsApp />
     </div>
   );
 }
