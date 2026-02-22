@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
 // Custom Sections
+import Link from 'next/link';
 import ChatSection from '@/components/ChatSection';
 import FAQSection from '@/components/FAQSection';
 import FlowDiagram from '@/components/FlowDiagram';
@@ -438,9 +439,9 @@ export default function Home() {
         </div>
 
         <div className="flex gap-12 text-sm font-bold text-gray-500">
-          <a href="#" className="hover:text-cyan-400 transition-colors">Privacidad</a>
-          <a href="#" className="hover:text-cyan-400 transition-colors">Términos</a>
-          <a href="#" className="hover:text-cyan-400 transition-colors">Contacto</a>
+          <Link href="/privacidad" className="hover:text-cyan-400 transition-colors">Privacidad</Link>
+          <Link href="/terminos" className="hover:text-cyan-400 transition-colors">Términos</Link>
+          <Link href="/contacto" className="hover:text-cyan-400 transition-colors">Contacto</Link>
         </div>
 
         <p className="text-sm text-gray-600">© 2026 Fluza. Todos los derechos reservados.</p>
