@@ -166,19 +166,29 @@ export default function ChatSection() {
                             <button className="text-gray-500 hover:text-white transition-colors p-2">
                                 <Plus size={20} />
                             </button>
-                            <textarea
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSend();
-                                    }
-                                }}
-                                placeholder="Pregunta lo que quieras sobre Fluza..."
-                                className="flex-1 bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 text-lg py-3 resize-none max-h-48 min-h-[44px] custom-scrollbar"
-                                rows={1}
-                            />
+                            <div className="flex-1 relative flex items-center">
+                                <textarea
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSend();
+                                        }
+                                    }}
+                                    placeholder="Pregunta lo que quieras sobre Fluza..."
+                                    className="flex-1 bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 text-lg py-3 resize-none max-h-48 min-h-[44px] custom-scrollbar z-10"
+                                    rows={1}
+                                />
+                                {input === '' && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: [0, 1, 0] }}
+                                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                                        className="absolute left-0 w-[2px] h-6 bg-cyan-400 pointer-events-none ml-[2px]"
+                                    />
+                                )}
+                            </div>
                             <div className="flex items-center gap-2">
                                 <button className="text-gray-500 hover:text-white transition-colors p-2 hidden sm:flex">
                                     <Mic size={20} />
